@@ -8,4 +8,4 @@ Archivo fuente: [`diagrams/ERD-PrismaFPCanarias-EN.mmd`](diagrams/ERD-PrismaFPCa
 
 ## 2. Second Life Energy
 
-Archivo fuente: [`diagrams/ERD-SecondLifeEnergy.mmd`](diagrams/ERD-SecondLifeEnergy.mmd)
+Archivo fuente: [`diagrams/ERD-SecondLifeEnergy-EN.mmd`](diagrams/ERD-SecondLifeEnergy-EN.mmd)
