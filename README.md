@@ -1,0 +1,554 @@
+# Project Diagrams
+
+This repository contains 2 ERD diagrams using [Mermaid](https://mermaid.js.org/).
+
+## 1. Prisma FP Canarias
+
+Archivo fuente: [`diagrams/ERD-PrismaFPCanarias-EN.mmd`](diagrams/ERD-PrismaFPCanarias-EN.mmd)
+
+```mermaid
+erDiagram
+    direction LR
+
+    User {
+        int id PK
+        string email UK
+        string passwordHash
+        string firstName
+        string lastName
+        boolean isActive
+        int failedLoginAttempts
+        datetime lockedUntil
+        datetime createdAt
+        datetime updatedAt
+    }
+
+    Role {
+        int id PK
+        string name UK
+        string description
+    }
+
+    Permission {
+        int id PK
+        string code UK
+        string description
+    }
+
+    UserRole {
+        int userId PK,FK
+        int roleId PK,FK
+        datetime assignedAt
+    }
+
+    RolePermission {
+        int roleId PK,FK
+        int permissionId PK,FK
+    }
+
+    AuthToken {
+        int id PK
+        int userId FK
+        string tokenHash UK
+        string tokenType
+        datetime expiresAt
+        datetime usedAt
+        datetime createdAt
+    }
+
+    EducationalCenter {
+        int id PK
+        string name
+        string code UK
+        string logoUrl
+        string address
+        boolean isActive
+    }
+
+    AcademicYear {
+        int id PK
+        string name UK
+        date startDate
+        date endDate
+        boolean isActive
+    }
+
+    ProfessionalFamily {
+        int id PK
+        string name UK
+        string code UK
+        string description
+    }
+
+    TrainingProgram {
+        int id PK
+        int familyId FK
+        int centerId FK
+        string name
+        string code
+        string level
+        boolean isActive
+    }
+
+    TutorAssignment {
+        int id PK
+        int tutorId FK
+        int programId FK
+        int academicYearId FK
+        datetime assignedAt
+    }
+
+    Student {
+        int id PK
+        int userId FK
+        string nationalId UK
+        string firstName
+        string lastName
+        string email
+        string phone
+        date birthDate
+        datetime createdAt
+        datetime updatedAt
+    }
+
+    StudentEnrollment {
+        int id PK
+        int studentId FK
+        int programId FK
+        int academicYearId FK
+        date enrollmentDate
+        date graduationDate
+        string status
+    }
+
+    Skill {
+        int id PK
+        string name UK
+        string category
+        string description
+    }
+
+    StudentSkill {
+        int studentId PK,FK
+        int skillId PK,FK
+        string proficiencyLevel
+        datetime updatedAt
+    }
+
+    StudentInterest {
+        int id PK
+        int studentId FK
+        string name
+        string description
+    }
+
+    Company {
+        int id PK
+        string taxId UK
+        string name
+        string sector
+        string city
+        string contactEmail
+        string contactPhone
+    }
+
+    Internship {
+        int id PK
+        int enrollmentId FK
+        int companyId FK
+        date startDate
+        date endDate
+        boolean wasHired
+        date hiringDate
+    }
+
+    EmploymentRecord {
+        int id PK
+        int studentId FK
+        int companyId FK
+        int internshipId FK
+        string position
+        string sector
+        date startDate
+        date endDate
+        boolean isRelatedToStudies
+    }
+
+    Consent {
+        int id PK
+        int studentId FK
+        int consentRequestId FK
+        string purpose
+        string status
+        string policyVersion
+        datetime recordedAt
+    }
+
+    ConsentRequest {
+        int id PK
+        int studentId FK
+        int sentById FK
+        string tokenHash UK
+        datetime sentAt
+        datetime expiresAt
+        datetime usedAt
+    }
+
+    Survey {
+        int id PK
+        string title
+        string description
+        boolean isActive
+        datetime createdAt
+    }
+
+    SurveyQuestion {
+        int id PK
+        int surveyId FK
+        string questionText
+        string questionType
+        int sortOrder
+        boolean isRequired
+    }
+
+    SurveyInvitation {
+        int id PK
+        int surveyId FK
+        int studentId FK
+        string tokenHash UK
+        datetime sentAt
+        datetime expiresAt
+        datetime completedAt
+    }
+
+    SurveyAnswer {
+        int id PK
+        int invitationId FK
+        int questionId FK
+        string answerValue
+        datetime answeredAt
+    }
+
+    AuditLog {
+        int id PK
+        int userId FK
+        string action
+        string entityType
+        int entityId
+        json previousValues
+        json newValues
+        datetime createdAt
+    }
+
+    User ||--o{ UserRole : has
+    Role ||--o{ UserRole : assigned
+    Role ||--o{ RolePermission : includes
+    Permission ||--o{ RolePermission : grants
+    User ||--o{ AuthToken : owns
+
+    EducationalCenter ||--o{ TrainingProgram : offers
+    ProfessionalFamily ||--o{ TrainingProgram : groups
+    User ||--o{ TutorAssignment : tutors
+    TrainingProgram ||--o{ TutorAssignment : assigned
+    AcademicYear ||--o{ TutorAssignment : during
+
+    User |o--o| Student : linkedAccount
+    Student ||--o{ StudentEnrollment : enrolls
+    TrainingProgram ||--o{ StudentEnrollment : contains
+    AcademicYear ||--o{ StudentEnrollment : during
+
+    Student ||--o{ StudentSkill : has
+    Skill ||--o{ StudentSkill : assigned
+    Student ||--o{ StudentInterest : expresses
+
+    StudentEnrollment ||--o{ Internship : includes
+    Company ||--o{ Internship : hosts
+    Student ||--o{ EmploymentRecord : has
+    Company ||--o{ EmploymentRecord : employs
+    Internship |o--o{ EmploymentRecord : leadsTo
+
+    Student ||--o{ Consent : records
+    Student ||--o{ ConsentRequest : receives
+    User ||--o{ ConsentRequest : sends
+    ConsentRequest |o--o{ Consent : generates
+
+    Survey ||--|{ SurveyQuestion : contains
+    Survey ||--o{ SurveyInvitation : sends
+    Student ||--o{ SurveyInvitation : receives
+    SurveyInvitation ||--o{ SurveyAnswer : contains
+    SurveyQuestion ||--o{ SurveyAnswer : answeredBy
+
+    User |o--o{ AuditLog : generates
+```
+
+## 2. Second Life Energy
+
+Archivo fuente: [`diagrams/ERD-Second-Life-Energy.mmd`](diagrams/ERD-Second-Life-Energy.mmd)
+
+```mermaid
+erDiagram
+    direction LR
+
+    User {
+        int id PK
+        string name
+        string email UK
+        string passwordHash
+        boolean isActive
+        datetime createdAt
+        datetime updatedAt
+    }
+
+    Role {
+        int id PK
+        string name UK
+        string description
+    }
+
+    Permission {
+        int id PK
+        string code UK
+        string description
+    }
+
+    UserRole {
+        int userId PK,FK
+        int roleId PK,FK
+        datetime assignedAt
+    }
+
+    RolePermission {
+        int roleId PK,FK
+        int permissionId PK,FK
+    }
+
+    Invitation {
+        int id PK
+        int invitedById FK
+        int roleId FK
+        string email
+        string tokenHash UK
+        datetime expiresAt
+        datetime usedAt
+        datetime createdAt
+    }
+
+    ArticleCategory {
+        int id PK
+        string name UK
+        string description
+        int parentCategoryId FK
+    }
+
+    Article {
+        int id PK
+        int categoryId FK
+        int createdById FK
+        string name
+        string description
+        string type
+        string specifications
+        int stock
+        string status
+        datetime createdAt
+        datetime updatedAt
+    }
+
+    KitComponent {
+        int kitId PK,FK
+        int componentId PK,FK
+        int quantity
+    }
+
+    ArticleImage {
+        int id PK
+        int articleId FK
+        string url
+        string altText
+        int sortOrder
+    }
+
+    StockMovement {
+        int id PK
+        int articleId FK
+        int userId FK
+        string type
+        int quantity
+        string reason
+        datetime createdAt
+    }
+
+    Request {
+        int id PK
+        string reference UK
+        string contactName
+        string contactEmail
+        string notes
+        string status
+        datetime createdAt
+    }
+
+    RequestItem {
+        int id PK
+        int requestId FK
+        int articleId FK
+        int quantity
+    }
+
+    Resource {
+        int id PK
+        int authorId FK
+        string title
+        string description
+        string type
+        string topic
+        string difficulty
+        string url
+        string status
+        datetime publishedAt
+        datetime createdAt
+    }
+
+    Tag {
+        int id PK
+        string name UK
+        string slug UK
+    }
+
+    ResourceTag {
+        int resourceId PK,FK
+        int tagId PK,FK
+    }
+
+    ArticleResource {
+        int articleId PK,FK
+        int resourceId PK,FK
+    }
+
+    ForumCategory {
+        int id PK
+        string name UK
+        string description
+    }
+
+    Question {
+        int id PK
+        int categoryId FK
+        int authorId FK
+        int acceptedAnswerId FK
+        string title
+        string content
+        string status
+        datetime createdAt
+    }
+
+    Answer {
+        int id PK
+        int questionId FK
+        int authorId FK
+        string content
+        string status
+        datetime createdAt
+    }
+
+    Moderation {
+        int id PK
+        int moderatorId FK
+        int questionId FK
+        int answerId FK
+        string action
+        string reason
+        datetime createdAt
+    }
+
+    Simulation {
+        int id PK
+        string title
+        string description
+        string platform
+        string url
+        string objectives
+        string materials
+    }
+
+    SimulationArticle {
+        int simulationId PK,FK
+        int articleId PK,FK
+    }
+
+    SimulationResource {
+        int simulationId PK,FK
+        int resourceId PK,FK
+    }
+
+    ArticleReview {
+        int id PK
+        int articleId FK
+        int reviewerId FK
+        string decision
+        string comments
+        datetime createdAt
+    }
+
+    AuditLog {
+        int id PK
+        int userId FK
+        string entity
+        int entityId
+        string action
+        json previousValues
+        json newValues
+        datetime createdAt
+    }
+
+    User ||--o{ UserRole : has
+    Role ||--o{ UserRole : assignedTo
+
+    Role ||--o{ RolePermission : includes
+    Permission ||--o{ RolePermission : grants
+
+    User ||--o{ Invitation : sends
+    Role ||--o{ Invitation : assigns
+
+    ArticleCategory |o--o{ ArticleCategory : hasSubcategories
+    ArticleCategory ||--o{ Article : classifies
+    User ||--o{ Article : creates
+
+    Article ||--o{ KitComponent : kit
+    Article ||--o{ KitComponent : component
+    Article ||--o{ ArticleImage : has
+
+    Article ||--o{ StockMovement : tracks
+    User ||--o{ StockMovement : records
+
+    Request ||--|{ RequestItem : contains
+    Article ||--o{ RequestItem : requestedIn
+
+    User ||--o{ Resource : authors
+    Resource ||--o{ ResourceTag : has
+    Tag ||--o{ ResourceTag : categorizes
+
+    Article ||--o{ ArticleResource : linkedTo
+    Resource ||--o{ ArticleResource : linkedTo
+
+    ForumCategory ||--o{ Question : contains
+    User ||--o{ Question : posts
+    Question ||--o{ Answer : receives
+    User ||--o{ Answer : writes
+    Answer |o--o| Question : acceptedAsSolution
+
+    User ||--o{ Moderation : performs
+    Question |o--o{ Moderation : moderatedBy
+    Answer |o--o{ Moderation : moderatedBy
+
+    Simulation ||--o{ SimulationArticle : uses
+    Article ||--o{ SimulationArticle : associatedWith
+    Simulation ||--o{ SimulationResource : uses
+    Resource ||--o{ SimulationResource : associatedWith
+
+    Article ||--o{ ArticleReview : receives
+    User ||--o{ ArticleReview : reviews
+
+    User |o--o{ AuditLog : generates
+
+```
